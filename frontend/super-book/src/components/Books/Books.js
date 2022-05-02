@@ -7,7 +7,7 @@ import { history } from "../../Routes/History";
 import Swal from "sweetalert2";
 
 const Books = () => {
-  const [book, setBook] = useState([""]);
+  const [book, setBook] = useState([]);
 
   const handleDeleteBook = (res) => {
     if (res === true) {
@@ -37,10 +37,11 @@ const Books = () => {
   const handleClick = () => {
     history.push("/homepage");
   };
+  
 
   return (
     <BookContainer>
-      {book.length !== 0 ? (
+      {book.length > 0  ? (
         book.map((book) => (
           <BookInformation
             key={book.id}
@@ -55,12 +56,14 @@ const Books = () => {
       ) : (
         <BookLoadingContainer>
           <ReactLoading type={"bubbles"} color={"#1A66B4"} />
-          <h1>Você não possui livros cadastrados</h1>
+          {/* <h1>Você não possui livros cadastrados</h1>
           <h2 onClick={handleClick}>
             Clique aqui para cadastrar um livro em sua coleção
-          </h2>
+          </h2> */}
         </BookLoadingContainer>
-      )}
+      
+      )
+      }
     </BookContainer>
   );
 };
