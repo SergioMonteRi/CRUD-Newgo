@@ -56,10 +56,10 @@ const Books = () => {
       ) : (
         <BookLoadingContainer>
           <ReactLoading type={"bubbles"} color={"#1A66B4"} />
-          {/* <h1>Você não possui livros cadastrados</h1>
+          <h1>Você não possui livros cadastrados</h1>
           <h2 onClick={handleClick}>
             Clique aqui para cadastrar um livro em sua coleção
-          </h2> */}
+          </h2>
         </BookLoadingContainer>
       
       )
