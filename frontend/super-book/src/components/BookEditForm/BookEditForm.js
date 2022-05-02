@@ -1,78 +1,100 @@
-import React, { useState } from "react";
+import React from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 import { history } from "../../Routes/History";
 import { BookEditFormContainer } from "./BookEditForm.Styles";
 
 const BookEditForm = (bookInformation) => {
-  const [name, setName] = useState(bookInformation.bookInformation.name);
-  const [author, setAuthor] = useState(bookInformation.bookInformation.author);
-  const [genre, setGenre] = useState(bookInformation.bookInformation.genre);
-  const [year, setYear] = useState(bookInformation.bookInformation.year);
+  const name = bookInformation.bookInformation.name;
+  const author = bookInformation.bookInformation.author;
+  const genre = bookInformation.bookInformation.genre;
+  const year = bookInformation.bookInformation.year;
   const id = bookInformation.bookInformation.id;
 
   const book = { id, name, author, genre, year };
 
-  const handleClick = () => {
-    axios
-      .put(`http://localhost:8080/books/${id}`, book)
-      .then(() => {
-        Swal.fire({
-          title: "Livro editado com sucesso!",
-          icon: "success",
-          confirmButtonText: "OK",
+  const formik = useFormik({
+    initialValues: {
+      id: book.id,
+      name: book.name,
+      author: book.author,
+      genre: book.genre,
+      year: book.year,
+    },
+    validationSchema: Yup.object({
+      name: Yup.string().required("Nome obrigatório"),
+      author: Yup.string().required("Autor obrigatório"),
+      genre: Yup.string().required("Gênero obrigatório"),
+      year: Yup.string().required("Ano obrigatório"),
+    }),
+    onSubmit: (values) => {
+      axios
+        .put(`http://localhost:8080/books/${id}`, values)
+        .then(() => {
+          Swal.fire({
+            title: "Livro editado com sucesso!",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+        })
+        .then(history.push("/showbooks"))
+        .catch((error) => {
+          Swal.fire({
+            title: "Falha ao editar livro",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
         });
-      })
-      .then(history.push("/showbooks"))
-      .catch((error) => {
-        Swal.fire({
-          title: "Falha ao editar livro",
-          icon: "error",
-          confirmButtonText: "OK",
-        });
-      });
-  };
+    },
+  });
 
   return (
     <BookEditFormContainer>
       <div className="form">
-        <form onSubmit={handleClick}>
+        <form onSubmit={formik.handleSubmit}>
           <h1>Em minha biblioteca vive</h1>
           <input
-            id="bookName"
-            value={name}
+            id="name"
             type="text"
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Nome do livro"
+            placeholder={name}
+            onChange={formik.handleChange}
+            values={formik.values.name}
           ></input>
+          {formik.errors.name ? <p>{formik.errors.name}</p> : null}
 
           <h1>Do autor</h1>
           <input
-            placeholder="Autor"
-            value={author}
             id="author"
             type="text"
-            onChange={(e) => setAuthor(e.target.value)}
+            placeholder={author}
+            onChange={formik.handleChange}
+            values={formik.values.author}
           ></input>
+          {formik.errors.author ? <p>{formik.errors.author}</p> : null}
 
           <h1>Do gênero</h1>
           <input
-            placeholder="Gênero"
-            value={genre}
             id="genre"
             type="text"
-            onChange={(e) => setGenre(e.target.value)}
+            placeholder={genre}
+            onChange={formik.handleChange}
+            values={formik.values.genre}
           ></input>
+          {formik.errors.genre ? <p>{formik.errors.genre}</p> : null}
 
           <h1>Do ano</h1>
           <input
-            placeholder="Ano"
-            value={year}
             id="year"
-            type="text"
-            onChange={(e) => setYear(e.target.value)}
+            type="number"
+            placeholder={year}
+            onChange={formik.handleChange}
+            values={formik.values.year}
           ></input>
+          {formik.errors.year ? <p>{formik.errors.year}</p> : null}
+
           <div className="btn-cadastrar">
             <button type="submit">Salvar edição</button>
           </div>
@@ -83,3 +105,22 @@ const BookEditForm = (bookInformation) => {
 };
 
 export default BookEditForm;
+// const handleClick = () => {
+//   axios
+//     .put(`http://localhost:8080/books/${id}`, book)
+//     .then(() => {
+//       Swal.fire({
+//         title: "Livro editado com sucesso!",
+//         icon: "success",
+//         confirmButtonText: "OK",
+//       });
+//     })
+//     .then(history.push("/showbooks"))
+//     .catch((error) => {
+//       Swal.fire({
+//         title: "Falha ao editar livro",
+//         icon: "error",
+//         confirmButtonText: "OK",
+//       });
+//     });
+// };
